@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
 export async function POST(req: NextRequest){
-  const {query} = await req.json();
-  const result = `[DeployOS Engine]
+  const { query, paid } = await req.json();
+  if(!paid){
+    const result = `[DeployOS Engine]
 Query: ${query}
 
 > Analyzing cost...
@@ -10,6 +11,22 @@ Query: ${query}
 
 Result: EKS cost $2000 -> $89/mo
 Stack: AWS, K8s, Terraform, FastAPI, LangChain
-Status: Ready to ship`;
-  return NextResponse.json({result})
+Status: Ready to ship
+
+--- 🔒 PAY $29 TO UNLOCK FULL TERRAFORM CODE ---`;
+    return NextResponse.json({ result, locked: true })
+  }
+  const result = `[DeployOS PRO UNLOCKED]
+Query: ${query}
+
+✅ FULL TERRAFORM CODE:
+module "eks" {
+  source = "terraform-aws-modules/eks/aws"
+  cluster_version = "1.29"
+  enable_karpenter = true
+}
+
+Result: EKS cost $2000 -> $89/mo
+Status: Deployed - $89/mo achieved`;
+  return NextResponse.json({ result, locked: false })
 }
